@@ -875,7 +875,7 @@ var Socket = exports.Socket = function () {
     this.reconnectAfterMs = opts.reconnectAfterMs || function (tries) {
       return [1000, 2000, 5000, 10000][tries - 1] || 10000;
     };
-    this.logger = opts.logger || function () {}; // noop
+    // this.logger = opts.logger || function () {}; // noop
     this.longpollerTimeout = opts.longpollerTimeout || 20000;
     this.params = opts.params || {};
     this.endPoint = endPoint + "/" + TRANSPORTS.websocket;
@@ -965,7 +965,7 @@ var Socket = exports.Socket = function () {
   }, {
     key: "log",
     value: function log(kind, msg, data) {
-      this.logger(kind, msg, data);
+      // this.logger(kind, msg, data);
     }
 
     // Registers callbacks for connection state change events
@@ -1000,7 +1000,7 @@ var Socket = exports.Socket = function () {
     value: function onConnOpen() {
       var _this7 = this;
 
-      this.log("transport", "connected to " + this.endPointURL());
+      //this.log("transport", "connected to " + this.endPointURL());
       this.flushSendBuffer();
       this.reconnectTimer.reset();
       if (!this.conn.skipHeartbeat) {
@@ -1016,7 +1016,7 @@ var Socket = exports.Socket = function () {
   }, {
     key: "onConnClose",
     value: function onConnClose(event) {
-      this.log("transport", "close", event);
+      //this.log("transport", "close", event);
       this.triggerChanError();
       clearInterval(this.heartbeatTimer);
       this.reconnectTimer.scheduleTimeout();
@@ -1027,7 +1027,7 @@ var Socket = exports.Socket = function () {
   }, {
     key: "onConnError",
     value: function onConnError(error) {
-      this.log("transport", error);
+      // this.log("transport", error);
       this.triggerChanError();
       this.stateChangeCallbacks.error.forEach(function (callback) {
         return callback(error);
@@ -1091,7 +1091,7 @@ var Socket = exports.Socket = function () {
           _this8.conn.send(result);
         });
       };
-      this.log("push", topic + " " + event + " (" + join_ref + ", " + ref + ")", payload);
+      // this.log("push", topic + " " + event + " (" + join_ref + ", " + ref + ")", payload);
       if (this.isConnected()) {
         callback();
       } else {
@@ -1123,7 +1123,7 @@ var Socket = exports.Socket = function () {
       }
       if (this.pendingHeartbeatRef) {
         this.pendingHeartbeatRef = null;
-        this.log("transport", "heartbeat timeout. Attempting to re-establish connection");
+        // this.log("transport", "heartbeat timeout. Attempting to re-establish connection");
         this.conn.close(WS_CLOSE_NORMAL, "hearbeat timeout");
         return;
       }
@@ -1156,7 +1156,7 @@ var Socket = exports.Socket = function () {
           _this9.pendingHeartbeatRef = null;
         }
 
-        _this9.log("receive", (payload.status || "") + " " + topic + " " + event + " " + (ref && "(" + ref + ")" || ""), payload);
+        //_this9.log("receive", (payload.status || "") + " " + topic + " " + event + " " + (ref && "(" + ref + ")" || ""), payload);
         _this9.channels.filter(function (channel) {
           return channel.isMember(topic, event, payload, join_ref);
         }).forEach(function (channel) {
@@ -2196,7 +2196,7 @@ var Socket = exports.Socket = (function () {
     this.reconnectAfterMs = opts.reconnectAfterMs || function (tries) {
       return [1000, 5000, 10000][tries - 1] || 10000;
     };
-    this.logger = opts.logger || function () {}; // noop
+    // this.logger = opts.logger || function () {}; // noop
     this.longpollerTimeout = opts.longpollerTimeout || 20000;
     this.params = {};
     this.reconnectTimer = new Timer(function () {
@@ -2278,7 +2278,7 @@ var Socket = exports.Socket = (function () {
       // Logs the message. Override `this.logger` for specialized logging. noops by default
 
       value: function log(kind, msg, data) {
-        this.logger(kind, msg, data);
+        // this.logger(kind, msg, data);
       },
       writable: true,
       configurable: true
@@ -2323,7 +2323,7 @@ var Socket = exports.Socket = (function () {
       value: function onConnOpen() {
         var _this = this;
 
-        this.log("transport", "connected to " + this.endPointURL(), this.transport.prototype);
+        // this.log("transport", "connected to " + this.endPointURL(), this.transport.prototype);
         this.flushSendBuffer();
         this.reconnectTimer.reset();
         if (!this.conn.skipHeartbeat) {
@@ -2341,7 +2341,7 @@ var Socket = exports.Socket = (function () {
     },
     onConnClose: {
       value: function onConnClose(event) {
-        this.log("transport", "close", event);
+        //this.log("transport", "close", event);
         this.triggerChanError();
         clearInterval(this.heartbeatTimer);
         this.reconnectTimer.setTimeout();
@@ -2354,7 +2354,7 @@ var Socket = exports.Socket = (function () {
     },
     onConnError: {
       value: function onConnError(error) {
-        this.log("transport", error);
+        //this.log("transport", error);
         this.triggerChanError();
         this.stateChangeCallbacks.error.forEach(function (callback) {
           return callback(error);
@@ -2427,7 +2427,7 @@ var Socket = exports.Socket = (function () {
         var callback = function () {
           return _this.conn.send(JSON.stringify(data));
         };
-        this.log("push", "" + topic + " " + event + " (" + ref + ")", payload);
+        // this.log("push", "" + topic + " " + event + " (" + ref + ")", payload);
         if (this.isConnected()) {
           callback();
         } else {
@@ -2481,7 +2481,7 @@ var Socket = exports.Socket = (function () {
         var payload = msg.payload;
         var ref = msg.ref;
 
-        this.log("receive", "" + (payload.status || "") + " " + topic + " " + event + " " + (ref && "(" + ref + ")" || ""), payload);
+        // this.log("receive", "" + (payload.status || "") + " " + topic + " " + event + " " + (ref && "(" + ref + ")" || ""), payload);
         this.channels.filter(function (channel) {
           return channel.isMember(topic);
         }).forEach(function (channel) {
@@ -2831,9 +2831,9 @@ var App = function () {
       var _this = this;
 
       var socket = new _phoenix.Socket("/socket", {
-        logger: function logger(kind, msg, data) {
-          console.log(kind + ": " + msg, data);
-        }
+        // logger: function logger(kind, msg, data) {
+          // console.log(kind + ": " + msg, data);
+        // }
       });
 
       socket.connect({ user_id: "123" });

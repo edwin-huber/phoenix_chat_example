@@ -18,7 +18,7 @@ defmodule Chat.Endpoint do
   end
 
 
-  plug Plug.Logger
+  # plug Plug.Logger
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
